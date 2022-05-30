@@ -1,0 +1,17 @@
+version: '3.4'
+
+services:
+  api:
+    image: pet-heaven-api
+    container_name: pet-heaven-api
+    restart: always
+    ports:
+      - "8090:8090"
+  web:
+    image: pet-heaven-web
+    container_name: pet-heaven-web
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - api
