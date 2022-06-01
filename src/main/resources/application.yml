@@ -1,0 +1,24 @@
+server:
+  port: 8090
+  ssl:
+#    download crt fist then enabled
+    enabled: true
+#    key-alias: pet-heaven
+    key-store: classpath:pet-heaven.p12
+    key-store-type: PKCS12
+    key-store-password: password
+#    key-password: password
+
+spring:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        default_schema: kelly
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://35.189.161.175:5432/hasura2?currentSchema=kelly
+    username: postgres
+    password: postgrespassword
+  flyway:
+    baseline-on-migrate: true

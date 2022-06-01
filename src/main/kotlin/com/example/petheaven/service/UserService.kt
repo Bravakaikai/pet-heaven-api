@@ -76,6 +76,7 @@ class UserService(val repo: UserRepository) {
                     user.password = currentUser.password
                 }
 
+                user.role = currentUser.role
                 user.wallet = currentUser.wallet
                 user.createdDate = currentUser.createdDate
                 repo.save(user)

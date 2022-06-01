@@ -13,7 +13,7 @@ data class User(
     val name: String,
     val email: String,
     var password: String = "",
-    val role: String = "Player",
+    var role: String = "Player",
     var wallet: Int = 1000,
     val pet: String,
     var createdDate: Date = Calendar.getInstance().time,
