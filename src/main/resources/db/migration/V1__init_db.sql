@@ -74,5 +74,5 @@ ORDER BY eq.id;
 
 -- Insert Admin User Data
 INSERT INTO kelly."user"(name, email, password, role, wallet, pet)
-SELECT 'kelly', 'kelly@gmail.com', '123456', 'Admin', 1000, 'Dog'
+SELECT 'kelly', 'kelly@gmail.com', 'QEwd/DWmy/4yGncCqBofQQ==', 'Admin', 1000, 'Dog'
 FROM (select 1) tmp WHERE NOT EXISTS (SELECT 1 FROM kelly."user" WHERE name = 'kelly' AND role = 'Admin');

@@ -53,7 +53,7 @@ class UserService(val repo: UserRepository) {
             if (currentUser.password == login.password) {
                 result.message = currentUser.id
             } else {
-                result = com.example.petheaven.model.Result("error", "Incorrect email or password")
+                result = Result("error", "Incorrect email or password")
             }
         } else {
             result.status = "not found"
