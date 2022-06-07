@@ -4,7 +4,9 @@ import com.example.petheaven.model.*
 import com.example.petheaven.repository.EquipmentRepository
 import com.example.petheaven.repository.UserEquipmentRepository
 import com.example.petheaven.repository.UserRepository
+import com.example.petheaven.vo.BagVo
 import org.springframework.stereotype.Service
+import javax.transaction.Transactional
 
 @Service
 class UserEquipmentService(
@@ -13,29 +15,25 @@ class UserEquipmentService(
     val equipmentRepo: EquipmentRepository
 ) {
     fun getUserEquipmentList(userId: Long): Result {
-        var bagList = mutableListOf<Bag>()
-
-        repo.findByIdUserId(userId)?.forEach {
-            var eq = it?.id?.let { item -> equipmentRepo.getById(item.equipmentId) }
-            val bag = eq?.let { eqItem -> it?.let { item -> Bag(eqItem.id, eq.name, eq.description, eq.price, eq.imgUrl, item.amount) } }
-            if (bag != null) {
-                bagList.add(bag)
-            }
+        val bagVoList = userRepo.getById(userId).bagList?.map {
+            val eq = it.equipment
+            eq?.let { it1 -> BagVo(id = it1.id, name = eq.name, description = eq.description, price = eq.price, imgUrl = eq.imgUrl, amount = it.amount) }
         }
-        return Result(message = bagList)
+        return Result(message = bagVoList)
     }
 
+    @Transactional
     fun buy(userEquipment: UserEquipment): Result {
         var result = Result()
 
-        val equipment = equipmentRepo.getById(userEquipment.id.equipmentId)
-        val user = userRepo.getById(userEquipment.id.userId)
+        val equipment = equipmentRepo.getById(userEquipment.equipmentId)
+        val user = userRepo.getById(userEquipment.userId)
         val balance = user.wallet - (equipment.price * userEquipment.amount)
 
         if (balance < 0) {
             result = Result("error", "Insufficient balance")
         } else {
-            val storage = repo.findByIdUserIdAndIdEquipmentId(userEquipment.id.userId, userEquipment.id.equipmentId)
+            val storage = repo.findByUserIdAndEquipmentId(userEquipment.userId, userEquipment.equipmentId)
 
             // purchase again
             if (storage != null) {
@@ -44,7 +42,7 @@ class UserEquipmentService(
             }
             repo.save(userEquipment)
 
-            user.wallet = balance;
+            user.wallet = balance
             userRepo.save(user)
         }
 
@@ -54,7 +52,7 @@ class UserEquipmentService(
     fun eat(userEquipment: UserEquipment): Result {
         var result = Result()
 
-        val storage = repo.findByIdUserIdAndIdEquipmentId(userEquipment.id.userId, userEquipment.id.equipmentId)
+        val storage = repo.findByUserIdAndEquipmentId(userEquipment.userId, userEquipment.equipmentId)
 
         if (storage == null) {
             result.status = "not found"
@@ -74,11 +72,12 @@ class UserEquipmentService(
         return result
     }
 
+    @Transactional
     fun sell(userEquipment: UserEquipment): Result {
         var result = Result()
 
-        val storage = repo.findByIdUserIdAndIdEquipmentId(userEquipment.id.userId, userEquipment.id.equipmentId)
-        val equipment = equipmentRepo.getById(userEquipment.id.equipmentId)
+        val storage = repo.findByUserIdAndEquipmentId(userEquipment.userId, userEquipment.equipmentId)
+        val equipment = equipmentRepo.getById(userEquipment.equipmentId)
 
         if (storage == null) {
             result.status = "not found"
@@ -93,7 +92,7 @@ class UserEquipmentService(
                     repo.save(storage)
                 }
 
-                val user = userRepo.getById(userEquipment.id.userId)
+                val user = userRepo.getById(userEquipment.userId)
                 val cost = equipment.price * userEquipment.amount
                 user.wallet += cost
                 userRepo.save(user)

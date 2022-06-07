@@ -10,10 +10,8 @@ import org.springframework.stereotype.Repository
 interface UserRepository : JpaRepository<User, Long> {
     fun findByName(name : String): User?
     fun findByEmail(email : String): User?
-
     @Query("SELECT * FROM kelly.user WHERE id != :id AND name = :name", nativeQuery = true)
     fun findByNameAndIdIsNotNull(@Param("id") id: Long, @Param("name") name: String): User?
-
     @Query("SELECT * FROM kelly.user WHERE id != :id AND email = :email", nativeQuery = true)
     fun findByEmailAndIdIsNotNull(@Param("id") id: Long, @Param("email") email: String): User?
 }

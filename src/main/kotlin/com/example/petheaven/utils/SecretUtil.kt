@@ -68,12 +68,12 @@ object SecretUtil {
      */
     private fun desEncrypt(data: String, key: String, iv: String): String? {
         return try {
-            val encrypted1 = Base64().decode(data)
+            val encrypted = Base64().decode(data)
             val cipher = Cipher.getInstance("AES/CBC/NoPadding")
             val keySpec = SecretKeySpec(key.toByteArray(), "AES")
             val ivSpec = IvParameterSpec(iv.toByteArray())
             cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec)
-            val original = cipher.doFinal(encrypted1)
+            val original = cipher.doFinal(encrypted)
             String(original).trim { it <= ' ' }
         } catch (e: Exception) {
             e.printStackTrace()

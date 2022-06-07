@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface UserEquipmentRepository : JpaRepository<UserEquipment, Long> {
-    fun findByIdUserId(userId : Long): List<UserEquipment?>?
-    fun findByIdEquipmentId(equipmentId : Long): UserEquipment?
-    fun findByIdUserIdAndIdEquipmentId(userId : Long, equipmentId : Long): UserEquipment?
+    fun findByEquipmentId(equipmentId : Long): UserEquipment?
+    fun findByUserIdAndEquipmentId(userId : Long, equipmentId : Long): UserEquipment?
 }

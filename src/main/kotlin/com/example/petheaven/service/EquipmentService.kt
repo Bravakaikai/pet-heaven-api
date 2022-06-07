@@ -3,34 +3,36 @@ package com.example.petheaven.service
 import com.example.petheaven.model.Equipment
 import com.example.petheaven.model.Result
 import com.example.petheaven.repository.EquipmentRepository
-import com.example.petheaven.repository.ShopRepository
 import com.example.petheaven.repository.UserEquipmentRepository
+import com.example.petheaven.vo.EquipmentVo
 import org.springframework.stereotype.Service
 
 @Service
 class EquipmentService(
     val repo: EquipmentRepository,
     val userEquipmentRepo: UserEquipmentRepository,
-    val shopRepo: ShopRepository
 ) {
-
     fun getShopList(): Result {
-        return Result("success", shopRepo.findAll())
-    }
-
-    fun getEquipmentList(): Result {
-        var equipmentList = repo.findAll()
+        val equipmentList = repo.findAll()
         if (equipmentList.isEmpty()) {
             seedData()
         }
-        return Result(message = repo.findAll())
+
+        return Result("success", repo.findAll().map {
+            it.convertToVo()
+        })
     }
 
     fun getInfo(id: Long): Result {
         return Result(message = repo.getById(id))
     }
 
-    fun create(equipment: Equipment): Result {
+    fun getEquipmentList(): Result {
+        return Result(message = repo.findAllByOrderByUpdatedDateDesc())
+    }
+
+    fun create(vo: EquipmentVo): Result {
+        val equipment = Equipment(name = vo.name, description = vo.description, price = vo.price, imgUrl = vo.imgUrl)
         var result = Result()
         result = checkDuplicate(result, equipment)
 
@@ -41,15 +43,18 @@ class EquipmentService(
         return result
     }
 
-    fun edit(equipment: Equipment): Result {
+    fun edit(id: Long, vo: EquipmentVo): Result {
+        val equipment =
+            Equipment(id = vo.id, name = vo.name, description = vo.description, price = vo.price, imgUrl = vo.imgUrl)
+
         var result = Result()
 
-        if (repo.existsById(equipment.id)) {
+        if (repo.existsById(id)) {
             result = checkDuplicate(result, equipment)
 
             // no error
             if (result.status != "error") {
-                val currentEquipment = repo.getById(equipment.id)
+                val currentEquipment = repo.getById(id)
                 equipment.createdDate = currentEquipment.createdDate
                 repo.save(equipment)
             }
@@ -61,10 +66,10 @@ class EquipmentService(
     }
 
     fun delete(id: Long): Result {
-        var result = Result()
+        val result = Result()
 
         if (repo.existsById(id)) {
-            val userEquipment = userEquipmentRepo.findByIdEquipmentId(id)
+            val userEquipment = userEquipmentRepo.findByEquipmentId(id)
             // userEquipment has data
             if (userEquipment != null) {
                 result.status = "error"
@@ -77,9 +82,9 @@ class EquipmentService(
 
     // check name & email is duplicate
     fun checkDuplicate(result: Result, equipment: Equipment): Result {
-        var errMsg = mutableMapOf<String, String>()
+        val errMsg = mutableMapOf<String, String>()
 
-        var nameIsExist: Equipment? = if (equipment.id != 0L) {
+        val nameIsExist: Equipment? = if (equipment.id != 0L) {
             // edit
             repo.findByNameAndIdIsNotNull(equipment.id, equipment.name)
         } else {

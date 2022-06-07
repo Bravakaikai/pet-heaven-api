@@ -1,5 +1,6 @@
 package com.example.petheaven.model
 
+import com.example.petheaven.vo.UserInfoVo
 import java.util.*
 import javax.persistence.*
 
@@ -17,19 +18,14 @@ data class User(
     var wallet: Int = 1000,
     val pet: String,
     var createdDate: Date = Calendar.getInstance().time,
-    var updatedDate: Date = Calendar.getInstance().time
-)
+    var updatedDate: Date = Calendar.getInstance().time,
 
-data class Login (
-    val email: String,
-    val password: String
-)
-
-data class Bag (
-    val id: Long,
-    val name: String,
-    val description: String,
-    val price: Int,
-    val imgUrl: String,
-    val amount: Int
-)
+    // fetch = FetchType.LAZY 只在用到時才載入關聯的物件
+    // fetch = FetchType.EAGER 在查詢時立刻載入關聯的物件
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userId")
+    val bagList: List<UserEquipment>? = null
+) {
+    fun convertToVo () : UserInfoVo {
+        return UserInfoVo(this.id, this.name, this.email, this.wallet, this.pet)
+    }
+}

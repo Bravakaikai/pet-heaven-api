@@ -1,41 +1,66 @@
 package com.example.petheaven.controller
 
-import com.example.petheaven.model.Login
+import com.example.petheaven.vo.LoginVo
+import com.example.petheaven.model.Result
 import com.example.petheaven.model.User
 import com.example.petheaven.service.UserService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/user")
 class UserController(val service: UserService) {
-    @GetMapping("/user")
+    @GetMapping
     fun index(): ResponseEntity<Any> {
-        return ResponseEntity.ok(service.getUserList())
+        return try {
+            ResponseEntity.ok(service.getUserList())
+        } catch (exception: Exception) {
+            ResponseEntity.ok(Result.errorResult())
+        }
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/{id}")
     fun info(@PathVariable id: Long): ResponseEntity<Any> {
-        return ResponseEntity.ok(service.getInfo(id))
+        return try {
+            ResponseEntity.ok(service.getInfo(id))
+        } catch (exception: Exception) {
+            ResponseEntity.ok(Result.errorResult())
+        }
     }
 
     @PostMapping("/signup")
     fun signUp(@RequestBody user: User): ResponseEntity<Any> {
-        return ResponseEntity.ok(service.signup(user))
+        return try {
+            ResponseEntity.ok(service.signup(user))
+        } catch (exception: Exception) {
+            ResponseEntity.ok(Result.errorResult())
+        }
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody login: Login): ResponseEntity<Any> {
-        return ResponseEntity.ok(service.login(login))
+    fun login(@RequestBody loginVo: LoginVo): ResponseEntity<Any> {
+        return try {
+            ResponseEntity.ok(service.login(loginVo))
+        } catch (exception: Exception) {
+            ResponseEntity.ok(Result.errorResult())
+        }
     }
 
     @PutMapping("/editInfo")
     fun editInfo(@RequestBody user: User): Any {
-        return ResponseEntity.ok(service.editInfo(user))
+        return try {
+            ResponseEntity.ok(service.editInfo(user))
+        } catch (exception: Exception) {
+            ResponseEntity.ok(Result.errorResult())
+        }
     }
 
     @GetMapping("/checkRoleValid/{id}")
     fun checkIsAdmin(@PathVariable id: Long): ResponseEntity<Any> {
-        return ResponseEntity.ok(service.checkIsAdmin(id))
+        return try {
+            ResponseEntity.ok(service.checkIsAdmin(id))
+        } catch (exception: Exception) {
+            ResponseEntity.ok(Result.errorResult())
+        }
     }
 }

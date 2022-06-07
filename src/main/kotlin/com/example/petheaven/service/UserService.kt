@@ -1,10 +1,11 @@
 package com.example.petheaven.service
 
-import com.example.petheaven.model.Login
+import com.example.petheaven.vo.LoginVo
 import com.example.petheaven.model.Result
 import com.example.petheaven.model.User
 import com.example.petheaven.repository.UserRepository
 import org.springframework.stereotype.Service
+import javax.transaction.Transactional
 
 @Service
 class UserService(val repo: UserRepository) {
@@ -16,17 +17,10 @@ class UserService(val repo: UserRepository) {
 
     fun getInfo(id: Long): Result {
         val user: User = repo.getById(id)
-        return Result(
-            message = mapOf(
-                "id" to user.id,
-                "name" to user.name,
-                "email" to user.email,
-                "wallet" to user.wallet,
-                "pet" to user.pet
-            )
-        )
+        return Result(message = user.convertToVo())
     }
 
+    @Transactional
     fun signup(user: User): Result {
         var result = Result()
 
@@ -37,20 +31,18 @@ class UserService(val repo: UserRepository) {
             repo.save(user)
 
             val currentUser = repo.findByEmail(user.email)
-            if (currentUser != null) {
-                result.message = currentUser.id
-            }
+            result.message = currentUser?.id
         }
         return result
     }
 
-    fun login(login: Login): Result {
+    fun login(loginVo: LoginVo): Result {
         var result = Result()
 
-        val currentUser = repo.findByEmail(login.email)
+        val currentUser = repo.findByEmail(loginVo.email)
 
         if (currentUser != null) {
-            if (currentUser.password == login.password) {
+            if (currentUser.password == loginVo.password) {
                 result.message = currentUser.id
             } else {
                 result = Result("error", "Incorrect email or password")
@@ -72,7 +64,7 @@ class UserService(val repo: UserRepository) {
             if (result.status != "error") {
                 val currentUser = repo.getById(user.id)
 
-                if (user.password.isNullOrEmpty()) {
+                if (user.password.isEmpty()) {
                     user.password = currentUser.password
                 }
 
@@ -97,10 +89,10 @@ class UserService(val repo: UserRepository) {
 
     // check name & email is duplicate
     fun checkDuplicate(result: Result, user: User): Result {
-        var errMsg = mutableMapOf<String, String>()
+        val errMsg = mutableMapOf<String, String>()
 
-        var nameIsExist: User?
-        var emailIsExist: User?
+        val nameIsExist: User?
+        val emailIsExist: User?
 
         // editInfo
         if (user.id != 0L) {

@@ -1,5 +1,7 @@
 server:
   port: 8090
+  servlet:
+    context-path: /api
   ssl:
 #    download crt fist then enabled
     enabled: true
@@ -22,3 +24,4 @@ spring:
     password: postgrespassword
   flyway:
     baseline-on-migrate: true
+    schemas: kelly
