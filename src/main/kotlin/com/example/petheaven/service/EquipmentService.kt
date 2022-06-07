@@ -13,11 +13,6 @@ class EquipmentService(
     val userEquipmentRepo: UserEquipmentRepository,
 ) {
     fun getShopList(): Result {
-        val equipmentList = repo.findAll()
-        if (equipmentList.isEmpty()) {
-            seedData()
-        }
-
         return Result("success", repo.findAll().map {
             it.convertToVo()
         })
@@ -102,71 +97,5 @@ class EquipmentService(
         }
 
         return result
-    }
-
-    fun seedData() {
-        val equipmentList = mutableListOf(
-            Equipment(
-                name = "咖哩飯",
-                description = "體力+20",
-                price = 30,
-                imgUrl = "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/food_curry_and_rice_01.png"
-            ),
-            Equipment(
-                name = "蛋包飯",
-                description = "體力+20",
-                price = 30,
-                imgUrl = "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/food_omeletterice_01.png"
-            ),
-            Equipment(
-                name = "吐司",
-                description = "體力+10",
-                price = 15,
-                imgUrl = "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/food_plain_bread_01.png"
-            ),
-            Equipment(
-                name = "披薩",
-                description = "體力+15",
-                price = 20,
-                imgUrl = "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/food_pizza_01.png"
-            ),
-            Equipment(
-                name = "玉米",
-                description = "體力+10",
-                price = 15,
-                imgUrl = "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/food_corn_01.png"
-            ),
-            Equipment(
-                name = "薯條",
-                description = "體力+5",
-                price = 10,
-                imgUrl = "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/food_french_fries_01.png"
-            ),
-            Equipment(
-                name = "西瓜",
-                description = "體力+3",
-                price = 5,
-                imgUrl = "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/food_watermelon_01.png"
-            ),
-            Equipment(
-                name = "剉冰",
-                description = "體力+3",
-                price = 5,
-                imgUrl = "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/food_shaved_ice_01.png"
-            ),
-            Equipment(
-                name = "布丁",
-                description = "體力+5",
-                price = 10,
-                imgUrl = "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/food_pudding_01.png"
-            ),
-            Equipment(
-                name = "起司蛋糕",
-                description = "體力+5",
-                price = 10,
-                imgUrl = "https://dotown.maeda-design-room.net/wp-content/uploads/2022/01/food_cheesecake_01.png"
-            ),
-        )
-        repo.saveAll(equipmentList)
     }
 }

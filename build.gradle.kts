@@ -42,7 +42,7 @@ tasks.withType<Test> {
 
 docker {
 	springBootApplication {
-		baseImage.set("openjdk:11-alpine")
+		baseImage.set("openjdk:11.0.15-slim")
 		ports.set(listOf(8090))
 		images.set(setOf("pet-heaven-api"))
 	}
