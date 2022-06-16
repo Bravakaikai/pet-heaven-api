@@ -15,3 +15,17 @@ services:
       - "80:80"
     depends_on:
       - web-api
+  message-queue:
+    image: nats
+    container_name: pet-heaven-nats
+    restart: always
+    ports:
+      - "4222:4222"
+  notify-handler:
+    image: pet-heaven-notify
+    container_name: pet-heaven-notify
+    restart: always
+    ports:
+      - "6543:6543"
+    depends_on:
+      - message-queue
