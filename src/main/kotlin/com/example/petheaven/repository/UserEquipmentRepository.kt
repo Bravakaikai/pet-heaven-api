@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository
 interface UserEquipmentRepository : JpaRepository<UserEquipment, Long> {
     fun findByEquipmentId(equipmentId : Long): UserEquipment?
     fun findByUserIdAndEquipmentId(userId : Long, equipmentId : Long): UserEquipment?
-    abstract fun save(storage: UserEquipment?)
+    fun save(storage: UserEquipment?)
 }
