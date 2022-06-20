@@ -37,10 +37,10 @@ class UserEquipmentService(
 
             // purchase again
             if (storage != null) {
-                userEquipment.amount += storage.amount
-                userEquipment.createdDate = storage.createdDate
-            }
-            repo.save(userEquipment)
+                storage.amount += userEquipment.amount
+                storage.updatedDate = userEquipment.updatedDate
+                repo.save(storage)
+            } else repo.save(userEquipment)
 
             user.wallet = balance
             userRepo.save(user)
